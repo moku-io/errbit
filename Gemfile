@@ -1,4 +1,5 @@
 source 'https://rubygems.org'
+ruby '2.1.2'
 
 RAILS_VERSION = '~> 4.1.8'
 
@@ -63,10 +64,12 @@ group :development, :test do
 end
 
 group :development do
-  gem 'capistrano',         require: false
-  gem 'capistrano-bundler', require: false
-  gem 'capistrano-rails',   require: false
-  gem 'capistrano-rbenv',   require: false
+  gem 'capistrano',                 require: false
+  gem 'capistrano-bundler',         require: false
+  gem 'capistrano-rvm',             require: false
+  gem 'capistrano-rails',           require: false
+  gem 'capistrano3-nginx', '2.0.2', require: false
+  gem 'capistrano3-puma',           require: false
 
   # better errors
   gem 'better_errors'
@@ -93,8 +96,9 @@ group :test do
 end
 
 group :heroku, :production do
-  gem 'rails_12factor', require: !!ENV["HEROKU"]
-  gem 'unicorn', :require => false
+#   gem 'rails_12factor', require: !!ENV["HEROKU"]
+#   gem 'unicorn', :require => false
+  gem 'puma'
 end
 
 gem 'sass-rails'
@@ -105,3 +109,6 @@ gem 'uglifier'
 gem 'jquery-rails', '~> 2.1.4'
 gem 'pjax_rails'
 gem 'underscore-rails'
+
+gem 'whenever'
+gem 'figaro'
