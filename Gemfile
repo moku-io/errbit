@@ -1,7 +1,9 @@
 source 'https://rubygems.org'
 ruby '2.1.5'
 
-RAILS_VERSION = '~> 4.1.8'
+RAILS_VERSION = '~> 4.1.11'
+
+send :ruby, ENV['GEMFILE_RUBY_VERSION'] if ENV['GEMFILE_RUBY_VERSION']
 
 gem 'actionmailer', RAILS_VERSION
 gem 'actionpack', RAILS_VERSION
@@ -27,10 +29,10 @@ gem 'rails_autolink'
 gem 'hoptoad_notifier', "~> 2.4"
 gem 'draper'
 
-gem 'errbit_plugin', github: 'errbit/errbit_plugin'
-gem 'errbit_github_plugin', github: 'errbit/errbit_github_plugin'
+gem 'errbit_plugin'
+gem 'errbit_github_plugin'
 
-gem 'dotenv-deployment'
+gem 'dotenv-rails'
 
 # Notification services
 # ---------------------------------------
@@ -54,7 +56,8 @@ gem 'flowdock'
 gem 'omniauth-github'
 
 gem 'ri_cal'
-gem 'yajl-ruby', :require => "yajl"
+gem 'yajl-ruby', platform: 'ruby'
+gem 'json', platform: 'jruby'
 
 group :development, :test do
   gem 'airbrake', :require => false
@@ -73,9 +76,8 @@ group :development do
 
   # better errors
   gem 'better_errors'
-  gem 'binding_of_caller'
+  gem 'binding_of_caller', platform: 'ruby'
   gem 'meta_request'
-  gem 'foreman', :require => false
 end
 
 group :test do
@@ -101,6 +103,7 @@ group :heroku, :production do
   gem 'puma'
 end
 
+gem 'therubyracer', :platform => :ruby  # C Ruby (MRI) or Rubinius, but NOT Windows
 gem 'sass-rails'
 gem 'coffee-rails'
 gem 'uglifier'
@@ -109,6 +112,9 @@ gem 'uglifier'
 gem 'jquery-rails', '~> 2.1.4'
 gem 'pjax_rails'
 gem 'underscore-rails'
+
+ENV['USER_GEMFILE'] ||= './UserGemfile'
+eval_gemfile ENV['USER_GEMFILE'] if File.exist?(ENV['USER_GEMFILE'])
 
 gem 'whenever'
 gem 'figaro'
