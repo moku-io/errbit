@@ -21,4 +21,5 @@ coverage
 *#
 .ruby-version
 .capistrano/metrics
-config/application.ymlNOTES
+config/application.yml
+NOTES
