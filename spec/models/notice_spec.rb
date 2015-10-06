@@ -3,7 +3,7 @@ describe Notice, type: 'model' do
     it 'requires a backtrace' do
       notice = Fabricate.build(:notice, :backtrace => nil)
       expect(notice).to_not be_valid
-      expect(notice.errors[:backtrace]).to include("can't be blank")
+      expect(notice.errors[:backtrace_id]).to include("can't be blank")
     end
 
     it 'requires the server_environment' do
@@ -89,6 +89,11 @@ describe Notice, type: 'model' do
     end
 
     it "returns 'N/A' when url is not valid" do
+      notice = Fabricate.build(:notice, :request => {'url' => "file:///path/to/some/resource/12"})
+      expect(notice.host).to eq 'N/A'
+    end
+
+    it "returns 'N/A' when url is not valid" do
       notice = Fabricate.build(:notice, :request => {'url' => "some string"})
       expect(notice.host).to eq 'N/A'
     end
@@ -103,6 +108,20 @@ describe Notice, type: 'model' do
     it "returns empty hash if not set" do
       notice = Notice.new
       expect(notice.request).to eq ({})
+    end
+  end
+
+  describe "env_vars" do
+    it "returns the cgi-data" do
+      notice = Notice.new
+      notice.request = { 'cgi-data' => { 'ONE' => 'TWO' } }
+      expect(notice.env_vars).to eq({ 'ONE' => 'TWO' })
+    end
+
+    it "always returns a hash" do
+      notice = Notice.new
+      notice.request = { 'cgi-data' => [] }
+      expect(notice.env_vars).to eq({})
     end
   end
 end

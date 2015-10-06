@@ -1,7 +1,7 @@
 source 'https://rubygems.org'
 ruby '2.1.5'
 
-RAILS_VERSION = '~> 4.1.11'
+RAILS_VERSION = '~> 4.2.0'
 
 send :ruby, ENV['GEMFILE_RUBY_VERSION'] if ENV['GEMFILE_RUBY_VERSION']
 
@@ -9,30 +9,27 @@ gem 'actionmailer', RAILS_VERSION
 gem 'actionpack', RAILS_VERSION
 gem 'railties', RAILS_VERSION
 
-gem 'moped', '~> 2.0.2'
-gem 'mongoid', '~> 4.0.0'
-
-gem 'mongoid_rails_migrations'
+gem 'actionmailer_inline_css'
+gem 'decent_exposure'
 gem 'devise'
+gem 'dotenv-rails'
+gem 'draper'
+gem 'errbit_plugin'
+gem 'errbit_github_plugin'
+gem 'font-awesome-rails'
 gem 'haml'
 gem 'htmlentities'
-gem 'rack-ssl', :require => 'rack/ssl'   # force SSL
-
-gem 'useragent'
-gem 'decent_exposure'
-gem 'actionmailer_inline_css'
 gem 'kaminari', '>= 0.14.1'
+gem 'mongoid', '5.0.0'
+gem 'mongoid_rails_migrations'
+gem 'rack-ssl', :require => 'rack/ssl'   # force SSL
 gem 'rack-ssl-enforcer', :require => false
 gem 'rails_autolink'
+gem 'useragent'
+
 # Please don't update hoptoad_notifier to airbrake.
 # It's for internal use only, and we monkeypatch certain methods
 gem 'hoptoad_notifier', "~> 2.4"
-gem 'draper'
-
-gem 'errbit_plugin'
-gem 'errbit_github_plugin'
-
-gem 'dotenv-rails'
 
 # Notification services
 # ---------------------------------------
@@ -81,16 +78,15 @@ group :development do
 end
 
 group :test do
-  gem 'rspec'
+  gem 'rspec', '~> 3.3'
   gem 'rspec-rails', '~> 3.0', require: false
   gem 'rspec-activemodel-mocks'
   gem 'rspec-its'
-  gem 'mongoid-rspec', require: false
+  gem 'mongoid-rspec', '~> 3.0.0', require: false
   gem 'fabrication'
   gem 'capybara'
   gem 'poltergeist'
   gem 'launchy'
-  gem 'database_cleaner'
   gem 'email_spec'
   gem 'timecop'
   gem 'test-unit', require: 'test/unit'
@@ -105,7 +101,6 @@ end
 
 gem 'therubyracer', :platform => :ruby  # C Ruby (MRI) or Rubinius, but NOT Windows
 gem 'sass-rails'
-gem 'coffee-rails'
 gem 'uglifier'
 # We can't upgrade because not compatible to jquery >= 1.9.
 # To do that, we need fix the rails.js

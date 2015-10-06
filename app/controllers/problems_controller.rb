@@ -13,8 +13,7 @@ class ProblemsController < ApplicationController
   ]
 
   expose(:app_scope) {
-    apps = current_user.admin? ? App.all : current_user.apps
-    params[:app_id] ? apps.where(:_id => params[:app_id]) : apps
+    params[:app_id] ? App.where(:_id => params[:app_id]) : App.all
   }
 
   expose(:app) {
@@ -22,7 +21,7 @@ class ProblemsController < ApplicationController
   }
 
   expose(:problem) {
-    app.problems.find(params[:id])
+    ProblemDecorator.new app.problems.find(params[:id])
   }
 
   expose(:all_errs) {
@@ -34,11 +33,11 @@ class ProblemsController < ApplicationController
   }
 
   expose(:problems) {
-    pro = Problem.for_apps(
-      app_scope
-    ).in_env(
-      params_environement
-    ).all_else_unresolved(all_errs).ordered_by(params_sort, params_order)
+    pro = Problem
+      .for_apps(app_scope)
+      .in_env(params_environement)
+      .all_else_unresolved(all_errs)
+      .ordered_by(params_sort, params_order)
 
     if request.format == :html
       pro.page(params[:page]).per(current_user.per_page)
@@ -50,8 +49,9 @@ class ProblemsController < ApplicationController
   def index; end
 
   def show
-    @notices  = problem.notices.reverse_ordered.page(params[:notice]).per(1)
-    @notice   = @notices.first
+    @notices = problem.object.notices.reverse_ordered
+      .page(params[:notice]).per(1)
+    @notice  = NoticeDecorator.new @notices.first
     @comment = Comment.new
   end
 

@@ -23,11 +23,11 @@ class App
     pre_processed: true,
     default: ->{ BSON::ObjectId.new.to_s }
 
-
   embeds_many :watchers
   embeds_many :deploys
   embeds_one :issue_tracker, :class_name => 'IssueTracker'
   embeds_one :notification_service
+  embeds_one :notice_fingerprinter, autobuild: true
 
   has_many :problems, :inverse_of => :app, :dependent => :destroy
 
@@ -39,6 +39,7 @@ class App
   validates_uniqueness_of :name, :allow_blank => true
   validates_uniqueness_of :api_key, :allow_blank => true
   validates_associated :watchers
+  validates_associated :notice_fingerprinter
   validate :check_issue_tracker
 
   accepts_nested_attributes_for :watchers, :allow_destroy => true,
@@ -47,6 +48,15 @@ class App
     :reject_if => proc { |attrs| !ErrbitPlugin::Registry.issue_trackers.keys.map(&:to_s).include?(attrs[:type_tracker].to_s) }
   accepts_nested_attributes_for :notification_service, :allow_destroy => true,
     :reject_if => proc { |attrs| !NotificationService.subclasses.map(&:to_s).include?(attrs[:type].to_s) }
+  accepts_nested_attributes_for :notice_fingerprinter
+
+  scope :watched_by, ->(user) do
+    where watchers: { "$elemMatch" => { "user_id" => user.id } }
+  end
+
+  def watched_by?(user)
+    watchers.pluck("user_id").include? user.id
+  end
 
   # Acceps a hash with the following attributes:
   #
@@ -55,10 +65,15 @@ class App
   # * <tt>:fingerprint</tt> - a unique value identifying the notice
   #
   def find_or_create_err!(attrs)
-    Err.where(
-      :fingerprint => attrs[:fingerprint]
-    ).first ||
-      problems.create!(attrs.slice(:error_class, :environment)).errs.create!(attrs.slice(:fingerprint, :problem_id))
+    err = Err.where(fingerprint: attrs[:fingerprint]).first
+    return err if err
+
+    problem = problems.create!(
+      error_class: attrs[:error_class],
+      environment: attrs[:environment],
+      app_name: name
+    )
+    problem.errs.create!(attrs.slice(:fingerprint, :problem_id))
   end
 
   # Mongoid Bug: find(id) on association proxies returns an Enumerator
@@ -178,7 +193,9 @@ class App
   protected
 
     def store_cached_attributes_on_problems
-      problems.each(&:cache_app_attributes)
+      Problem.where(:app_id => id).update_all(
+        app_name: name
+      )
     end
 
     def generate_api_key
