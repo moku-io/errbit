@@ -52,7 +52,9 @@ class ErrorReport
     return @notice if @notice
 
     make_notice
-    error.notices << @notice
+    notice.err_id = error.id
+    notice.save!
+
     cache_attributes_on_problem
     email_notification
     services_notification
@@ -61,15 +63,15 @@ class ErrorReport
 
   def make_notice
     @notice = Notice.new(
-      app: app,
-      message: message,
-      error_class: error_class,
-      backtrace: backtrace,
-      request: request,
+      app:                app,
+      message:            message,
+      error_class:        error_class,
+      backtrace:          backtrace,
+      request:            request,
       server_environment: server_environment,
-      notifier: notifier,
-      user_attributes: user_attributes,
-      framework: framework
+      notifier:           notifier,
+      user_attributes:    user_attributes,
+      framework:          framework
     )
   end
 
@@ -94,7 +96,7 @@ class ErrorReport
 
   # Launch all notification define on the app associate to this notice
   def services_notification
-    return true unless app.notification_service_configured? and should_notify?
+    return true unless app.notification_service_configured? && should_notify?
     app.notification_service.create_notification(problem)
   rescue => e
     HoptoadNotifier.notify(e)

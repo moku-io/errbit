@@ -2,7 +2,7 @@ language: ruby
 rvm:
   - 2.1
   - 2.2
-  - rbx-2
+  - 2.3.1
   - ruby-head
   - jruby-head
 env:
@@ -15,9 +15,10 @@ before_script:
   - mkdir /tmp/data
   - ${PWD}/mongodb-linux-x86_64-2.6.10/bin/mongod --dbpath /tmp/data --bind_ip 127.0.0.1 --auth &> /dev/null &
   - bundle exec rake errbit:bootstrap
-script: bundle exec rspec
+script:
+  - bundle exec rspec
+  - bundle exec rubocop --lint
 matrix:
   allow_failures:
-    - rvm: rbx-2
     - rvm: ruby-head
     - rvm: jruby-head
