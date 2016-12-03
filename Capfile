@@ -16,10 +16,12 @@ require 'capistrano/deploy'
 #   https://github.com/capistrano/bundler
 #   https://github.com/capistrano/rails
 
-# require 'capistrano/rvm'
+require 'capistrano/rvm'
 require 'capistrano/rbenv' if ENV['rbenv']
-require 'capistrano/bundler'
 require 'capistrano/rails/assets'
 require 'capistrano/puma'
+require 'capistrano/rails'
+# require 'capistrano/nginx'
+# require 'capistrano/puma/monit'
 
 Dir.glob('lib/capistrano/tasks/*.rake').each { |r| import r }
