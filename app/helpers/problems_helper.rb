@@ -18,7 +18,7 @@ module ProblemsHelper
     options.reverse_merge! default_options
     params = options.extract!(:s, :d).delete_if { |_k, v| v.blank? }
     email_hash = Digest::MD5.hexdigest(email)
-    url = "https://secure.gravatar.com"
+    url = "https://secure.gravatar.com" # Force https
     "#{url}/avatar/#{email_hash}?#{params.to_query}"
   end
 end
