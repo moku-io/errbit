@@ -431,7 +431,7 @@ DEPENDENCIES
   better_errors
   binding_of_caller
   campy
-  capistrano
+  capistrano (= 3.4.0)
   capistrano-bundler
   capistrano-rails
   capistrano-rvm
