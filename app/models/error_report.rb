@@ -83,7 +83,7 @@ class ErrorReport
   # Send email notification if needed
   def email_notification
     return false unless app.emailable?
-    return false unless app.email_at_notices.include?(@problem.notices_count)
+    return false unless app.email_at_notices.include?(0) || app.email_at_notices.include?(@problem.notices_count)    # Moku: edited to allow infinite email (0 value)
     Mailer.err_notification(self).deliver_now
   rescue => e
     HoptoadNotifier.notify(e)

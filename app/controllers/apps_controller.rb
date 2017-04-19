@@ -119,7 +119,7 @@ protected
     # Sanitize negative values, split on comma,
     # strip, parse as integer, remove all '0's.
     # If empty, set as default and show an error message.
-    email_at_notices = val.gsub(/-\d+/, "").split(",").map { |v| v.strip.to_i }.reject { |v| v == 0 }
+    email_at_notices = val.gsub(/-\d+/, "").split(",").map { |v| v.strip.to_i }           # Moku: edited to allow infinite email (0 value)
     if email_at_notices.any?
       params[:app][:email_at_notices] = email_at_notices
     else

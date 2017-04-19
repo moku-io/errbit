@@ -67,12 +67,13 @@ group :development, :test do
 end
 
 group :development do
-  gem 'capistrano',                 require: false
+  gem 'capistrano', '3.4.0',        require: false
   gem 'capistrano-bundler',         require: false
   gem 'capistrano-rvm',             require: false
   gem 'capistrano-rails',           require: false
   gem 'capistrano3-nginx', '2.0.2', require: false
   gem 'capistrano3-puma',           require: false
+
 
   # better errors
   gem 'better_errors'
@@ -97,8 +98,7 @@ group :test do
 end
 
 group :heroku, :production do
-#   gem 'rails_12factor', require: !!ENV["HEROKU"]
-#   gem 'unicorn', :require => false
+  # gem 'rails_12factor', require: ENV.key?("HEROKU")
 end
 
 group :no_docker, :test, :development do
