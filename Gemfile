@@ -1,5 +1,5 @@
 source 'https://rubygems.org'
-ruby '2.1.5'
+ruby '2.3.3'
 
 RAILS_VERSION = '~> 4.2.5.2'
 
