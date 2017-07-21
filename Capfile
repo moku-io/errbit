@@ -21,7 +21,7 @@ require 'capistrano/rbenv' if ENV['rbenv']
 require 'capistrano/rails/assets'
 require 'capistrano/puma'
 require 'capistrano/rails'
-# require 'capistrano/nginx'
-# require 'capistrano/puma/monit'
+require 'capistrano/nginx'
+require 'capistrano/puma/monit'
 
 Dir.glob('lib/capistrano/tasks/*.rake').each { |r| import r }

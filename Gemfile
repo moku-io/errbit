@@ -72,7 +72,7 @@ group :development do
   gem 'capistrano-rvm',             require: false
   gem 'capistrano-rails',           require: false
   gem 'capistrano3-nginx', '2.0.2', require: false
-  gem 'capistrano3-puma',           require: false
+  gem 'capistrano3-puma', '1.1.0',  require: false
 
 
   # better errors
