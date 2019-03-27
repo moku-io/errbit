@@ -59,6 +59,23 @@ GEM
     byebug (10.0.2)
     callsite (0.0.11)
     campy (1.0.0)
+    capistrano (3.4.0)
+      i18n
+      rake (>= 10.0.0)
+      sshkit (~> 1.3)
+    capistrano-bundler (1.5.0)
+      capistrano (~> 3.1)
+    capistrano-rails (1.4.0)
+      capistrano (~> 3.1)
+      capistrano-bundler (~> 1.1)
+    capistrano-rvm (0.1.2)
+      capistrano (~> 3.0)
+      sshkit (~> 1.2)
+    capistrano3-nginx (2.0.2)
+      capistrano (>= 3.0.0)
+    capistrano3-puma (1.1.0)
+      capistrano (~> 3.0)
+      puma (>= 2.6)
     capybara (3.12.0)
       addressable
       mini_mime (>= 0.1.3)
@@ -212,6 +229,9 @@ GEM
     multi_json (1.13.1)
     multi_xml (0.6.0)
     multipart-post (2.0.0)
+    net-scp (2.0.0)
+      net-ssh (>= 2.6.5, < 6.0.0)
+    net-ssh (5.2.0)
     netrc (0.11.0)
     nokogiri (1.8.5)
       mini_portile2 (~> 2.3.0)
@@ -298,13 +318,8 @@ GEM
       rails-deprecated_sanitizer (>= 1.0.1)
     rails-html-sanitizer (1.0.4)
       loofah (~> 2.2, >= 2.2.2)
-    rails_12factor (0.0.3)
-      rails_serve_static_assets
-      rails_stdout_logging
     rails_autolink (1.1.6)
       rails (> 3.1)
-    rails_serve_static_assets (0.0.4)
-    rails_stdout_logging (0.0.3)
     railties (4.2.10)
       actionpack (= 4.2.10)
       activesupport (= 4.2.10)
@@ -391,6 +406,9 @@ GEM
       actionpack (>= 4.0)
       activesupport (>= 4.0)
       sprockets (>= 3.0.0)
+    sshkit (1.18.2)
+      net-scp (>= 1.1.2)
+      net-ssh (>= 2.8.0)
     sucker_punch (2.1.1)
       concurrent-ruby (~> 1.0)
     temple (0.8.0)
@@ -440,6 +458,12 @@ DEPENDENCIES
   better_errors
   binding_of_caller
   campy
+  capistrano (= 3.4.0)
+  capistrano-bundler
+  capistrano-rails
+  capistrano-rvm
+  capistrano3-nginx (= 2.0.2)
+  capistrano3-puma (= 1.1.0)
   capybara
   coveralls
   decent_exposure
@@ -478,7 +502,6 @@ DEPENDENCIES
   quiet_assets
   rack-ssl
   rack-ssl-enforcer
-  rails_12factor
   rails_autolink
   railties (~> 4.2.10)
   rake
@@ -498,5 +521,8 @@ DEPENDENCIES
   xmpp4r
   yajl-ruby
 
+RUBY VERSION
+   ruby 2.3.3p222
+
 BUNDLED WITH
-   1.16.2
+   1.17.3
