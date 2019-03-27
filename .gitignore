@@ -19,6 +19,7 @@ bundle
 coverage
 *#
 .ruby-version
+.tool-versions
 .capistrano/metrics
 config/application.yml
 NOTES

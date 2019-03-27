@@ -85,8 +85,14 @@ describe ErrorReport do
     describe "notice create" do
       before { error_report.generate_notice! }
       subject { error_report.notice }
-      its(:message) { 'HoptoadTestingException: Testing hoptoad via "rake hoptoad:test". If you can see this, it works.' }
-      its(:framework) { should == 'Rails: 3.2.11' }
+
+      it 'has correct message' do
+        expect(subject.message).to include('HoptoadTestingException: Testing hoptoad via "rake hoptoad:test". If you can see this, it works')
+      end
+
+      it 'has correct framework' do
+        expect(subject.framework).to eq('Rails: 3.2.11')
+      end
 
       it 'has complete backtrace' do
         expect(subject.backtrace_lines.size).to eq 73
@@ -234,6 +240,58 @@ describe ErrorReport do
       expect(email.subject).to include(notice.message.truncate(50))
       expect(email.subject).to include("[#{app.name}]")
       expect(email.subject).to include("[#{notice.environment_name}]")
+    end
+
+    context 'when email_at_notices config is specified', type: :mailer do
+      before do
+        allow(Errbit::Config).to receive(:email_at_notices).and_return(email_at_notices)
+      end
+
+      context 'as [0]' do
+        let(:email_at_notices) { [0] }
+
+        it "sends email on 1st occurrence" do
+          1.times { described_class.new(xml).generate_notice! }
+          expect(ActionMailer::Base.deliveries.length).to eq(1)
+        end
+
+        it "sends email on 2nd occurrence" do
+          2.times { described_class.new(xml).generate_notice! }
+          expect(ActionMailer::Base.deliveries.length).to eq(2)
+        end
+
+        it "sends email on 3rd occurrence" do
+          3.times { described_class.new(xml).generate_notice! }
+          expect(ActionMailer::Base.deliveries.length).to eq(3)
+        end
+      end
+
+      context "as [1,3]" do
+        let(:email_at_notices) { [1, 3] }
+
+        it "sends email on 1st occurrence" do
+          1.times { described_class.new(xml).generate_notice! }
+          expect(ActionMailer::Base.deliveries.length).to eq(1)
+        end
+
+        it "does not send email on 2nd occurrence" do
+          2.times { described_class.new(xml).generate_notice! }
+          expect(ActionMailer::Base.deliveries.length).to eq(1)
+        end
+
+        it "sends email on 3rd occurrence" do
+          3.times { described_class.new(xml).generate_notice! }
+          expect(ActionMailer::Base.deliveries.length).to eq(2)
+        end
+
+        it "sends email on all occurrences when problem was resolved" do
+          3.times do
+            notice = described_class.new(xml).generate_notice!
+            notice.problem.resolve!
+          end
+          expect(ActionMailer::Base.deliveries.length).to eq(3)
+        end
+      end
     end
 
     context "with xml without request section" do

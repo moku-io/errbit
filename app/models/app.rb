@@ -50,6 +50,9 @@ class App
     reject_if:     proc { |attrs| !NotificationService.subclasses.map(&:to_s).include?(attrs[:type].to_s) }
   accepts_nested_attributes_for :notice_fingerprinter
 
+  index({ name: "text" }, default_language: "english")
+
+  scope :search, ->(value) { where('$text' => { '$search' => value }) }
   scope :watched_by, lambda { |user|
     where watchers: { "$elemMatch" => { "user_id" => user.id } }
   }
@@ -188,6 +191,10 @@ class App
     update_attribute(:api_key, SecureRandom.hex)
   end
 
+  def use_site_fingerprinter
+    notice_fingerprinter.source == 'site'
+  end
+
 protected
 
   def store_cached_attributes_on_problems
@@ -212,7 +219,7 @@ protected
   def normalize_github_repo
     return if github_repo.blank?
     github_host = URI.parse(Errbit::Config.github_url).host
-    github_host = Regexp.escape(github_host)
+    github_host = ::Regexp.escape(github_host)
     github_repo.strip!
     github_repo.sub!(%r{(git@|https?://)#{github_host}(/|:)}, '')
     github_repo.sub!(/\.git$/, '')

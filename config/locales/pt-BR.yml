@@ -11,6 +11,10 @@ pt-BR:
       destroy:
         success: "'%{app_name}' foi destruído com sucesso."
 
+  n_errs:
+    one:   "%{count} erro"
+    other: "%{count} erros"
+    will_be_deleted: serà excluído(s)
   n_errs_have:
     one:   "%{count} erro foi"
     other: "%{count} erros foram"
@@ -80,6 +84,7 @@ pt-BR:
       show_resolved: "exibir resolvidos"
     table:
         app: Aplicação
+        env: Ambiente
         what_&_where: 'O quê & onde'
         latest: Último
         count: Total
@@ -107,11 +112,11 @@ pt-BR:
       summary: Resumo
       backtrace: Backtrace
       user: Usuário
-      environment: Ambiente
       parameters: Parâmetros
       session: Sessão
       ago_by: atrás por
       ago_by_unkown_user: atrás por [Usuário Desconhecido]
+      first_notice: Primeiro notificação
       last_notice: Última notificação
       environment: Ambiente
       app: Aplicação
@@ -139,7 +144,7 @@ pt-BR:
       name: Nome
       email: E-mail
       entries: Registros por página
-      time_zone: Fuso horário 
+      time_zone: Fuso horário
       password: Senha
       password_confirmation: Confirmação de Senha
       admin: Adminstrador?

@@ -120,7 +120,6 @@ describe ProblemsController, type: 'controller' do
       expect(controller.problems).to include(@problem1)
       expect(controller.problems).to include(@problem2)
     end
-
   end
 
   describe "GET /apps/:app_id/problems/:id" do
@@ -143,6 +142,16 @@ describe ProblemsController, type: 'controller' do
       expect(response).to be_success
     end
 
+    context "when rendering views" do
+      render_views
+
+      it "successfully renders the view even when there are no notices attached to the problem" do
+        expect(err.problem.notices).to be_empty
+        get :show, app_id: app.id, id: err.problem.id
+        expect(response).to be_success
+      end
+    end
+
     context 'pagination' do
       let!(:notices) do
         3.times.reduce([]) do |coll, i|
@@ -161,6 +170,17 @@ describe ProblemsController, type: 'controller' do
         expect(assigns(:notices).entries.count).to eq 1
         expect(assigns(:notices)).to include(notices.first)
       end
+    end
+  end
+
+  describe "GET /apps/:app_id/problems/:id/xhr_sparkline" do
+    before do
+      sign_in user
+    end
+
+    it "renders without error" do
+      get :xhr_sparkline, app_id: app.id, id: err.problem.id
+      expect(response).to be_success
     end
   end
 
@@ -434,7 +454,7 @@ describe ProblemsController, type: 'controller' do
 
       it "should display a message" do
         put :destroy_all, app_id: @app.id
-        expect(request.flash[:success]).to match(/been deleted/)
+        expect(request.flash[:success]).to match(/be deleted/)
       end
 
       it "should redirect back to the app page" do

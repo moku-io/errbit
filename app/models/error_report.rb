@@ -22,6 +22,7 @@ class ErrorReport
   attr_reader :notice
   attr_reader :notifier
   attr_reader :problem
+  attr_reader :problem_was_resolved
   attr_reader :request
   attr_reader :server_environment
   attr_reader :user_attributes
@@ -55,6 +56,7 @@ class ErrorReport
     notice.err_id = error.id
     notice.save!
 
+    retrieve_problem_was_resolved
     cache_attributes_on_problem
     email_notification
     services_notification
@@ -75,28 +77,38 @@ class ErrorReport
     )
   end
 
+  def retrieve_problem_was_resolved
+    @problem_was_resolved = Problem.where('_id' => @error.problem_id, resolved: true).exists?
+  end
+
   # Update problem cache with information about this notice
   def cache_attributes_on_problem
     @problem = Problem.cache_notice(@error.problem_id, @notice)
   end
 
+  def should_email?
+    problem_was_resolved ||
+      app.email_at_notices.include?(0) ||
+      app.email_at_notices.include?(@problem.notices_count)
+  end
+
   # Send email notification if needed
   def email_notification
-    return false unless app.emailable?
-    return false unless app.email_at_notices.include?(0) || app.email_at_notices.include?(@problem.notices_count)    # Moku: edited to allow infinite email (0 value)
+    return unless app.emailable? && should_email?
     Mailer.err_notification(self).deliver_now
   rescue => e
     HoptoadNotifier.notify(e)
   end
 
   def should_notify?
-    app.notification_service.notify_at_notices.include?(0) ||
+    problem_was_resolved ||
+      app.notification_service.notify_at_notices.include?(0) ||
       app.notification_service.notify_at_notices.include?(@problem.notices_count)
   end
 
   # Launch all notification define on the app associate to this notice
   def services_notification
-    return true unless app.notification_service_configured? && should_notify?
+    return unless app.notification_service_configured? && should_notify?
     app.notification_service.create_notification(problem)
   rescue => e
     HoptoadNotifier.notify(e)
