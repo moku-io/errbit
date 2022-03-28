@@ -1,9 +1,11 @@
 source 'https://rubygems.org'
-ruby '2.3.3'
+ruby '2.5.6'
 
 RAILS_VERSION = '~> 4.2.10'
 
 send :ruby, ENV['GEMFILE_RUBY_VERSION'] if ENV['GEMFILE_RUBY_VERSION']
+
+gem 'mimemagic', '< 0.4'
 
 gem 'actionmailer', RAILS_VERSION
 gem 'actionpack', RAILS_VERSION
