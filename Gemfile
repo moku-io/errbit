@@ -1,7 +1,7 @@
 source 'https://rubygems.org'
 ruby '2.5.6'
 
-RAILS_VERSION = '~> 4.2.10'
+RAILS_VERSION = '~> 4.2.11'
 
 send :ruby, ENV['GEMFILE_RUBY_VERSION'] if ENV['GEMFILE_RUBY_VERSION']
 
@@ -13,21 +13,23 @@ gem 'railties', RAILS_VERSION
 
 gem 'actionmailer_inline_css'
 gem 'decent_exposure'
-gem 'devise', '~> 4.4.0'
+gem 'devise', '~> 4.7'
 gem 'dotenv-rails'
 gem 'draper'
 gem 'errbit_plugin'
 gem 'errbit_github_plugin'
 gem 'font-awesome-rails'
-gem 'haml'
+gem 'haml', '~> 5.1'
 gem 'htmlentities'
 gem 'kaminari'
 gem 'kaminari-mongoid'
 gem 'mongoid', '~> 5.4'
-gem 'mongoid_rails_migrations'
+gem 'omniauth'
+gem 'omniauth-github'
+gem 'omniauth-google-oauth2'
 gem 'rack-ssl', require: 'rack/ssl' # force SSL
 gem 'rack-ssl-enforcer', require: false
-gem 'rails_autolink'
+gem 'rinku'
 gem 'useragent'
 
 # Please don't update hoptoad_notifier to airbrake.
@@ -37,8 +39,6 @@ gem 'hoptoad_notifier', "~> 2.4"
 # Notification services
 # ---------------------------------------
 gem 'campy'
-# Hipchat
-gem 'hipchat'
 # Google Talk
 gem 'xmpp4r', require: ["xmpp4r", "xmpp4r/muc"]
 # Hoiio (SMS)
@@ -50,23 +50,21 @@ gem 'httparty'
 # Flowdock
 gem 'flowdock'
 
-# Authentication
-# ---------------------------------------
-# GitHub OAuth
-gem 'omniauth-github'
-# Google OAuth
-gem 'omniauth-google-oauth2'
-
 gem 'ri_cal'
 gem 'yajl-ruby', platform: 'ruby'
 gem 'json', platform: 'jruby'
+
+# For Ruby 2.7
+gem 'bigdecimal', '~> 1.4.4'
 
 group :development, :test do
   gem 'airbrake', '~> 4.3.5', require: false
   gem 'pry-rails'
   gem 'pry-byebug', platforms: [:mri]
   gem 'quiet_assets'
-  gem 'rubocop', require: false
+  gem 'rubocop', '~> 0.71.0', require: false
+  gem 'rubocop-performance', require: false
+  gem 'rubocop-rails', require: false
 end
 
 group :development do
@@ -103,10 +101,10 @@ group :heroku, :production do
 end
 
 group :no_docker, :test, :development do
-  gem 'therubyracer', platform: :ruby # C Ruby (MRI) or Rubinius, but NOT Windows
+  gem 'mini_racer', '~> 0.3.1', platform: :ruby # C Ruby (MRI) or Rubinius, but NOT Windows
 end
 
-gem 'puma'
+gem 'puma', '~> 4.3.8'
 gem 'sass-rails'
 gem 'uglifier'
 gem 'jquery-rails'
