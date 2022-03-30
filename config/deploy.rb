@@ -34,11 +34,6 @@ set :nginx_template, "#{stage_config_path}/nginx.conf.erb"
 set :app_server, true
 set :app_server_socket, "#{shared_path}/tmp/sockets/puma.sock"
 
-# Delayed jobs
-set :delayed_job_workers, 1
-# set :delayed_job_queues, []
-set :delayed_job_roles, %i[app background]
-
 ## Defaults:
 # set :scm,           :git
 # set :branch,        :master
@@ -78,7 +73,6 @@ namespace :deploy do
       invoke 'nginx:site:add'
       invoke 'nginx:site:enable'
       invoke 'puma:monit:config'
-      invoke 'deploy:my_delayed_job:monit:config'
     end
   end
 
@@ -139,49 +133,11 @@ namespace :deploy do
     end
   end
 
-  namespace :my_delayed_job do
-    desc 'Stop all delayed jobs workers executed with numeric identifiers'
-    task :stop do
-      # Custom method to stop all workers.
-      # Notice: `delayed_job restart` is not working with delayed jobs workers executed with numeric identifiers (e.g. "-i 0"),
-      # so workers are individually stopped by this method. They will be restarted by monit.
-      delayed_job_bin = Pathname.new('bin').join('delayed_job')
-
-      on roles(:app), in: :sequence, wait: 5 do
-        within release_path do
-          with rails_env: fetch(:rails_env) do
-            (0..3).each do |dj_process_number|
-              execute :bundle, :exec, delayed_job_bin, "-i #{dj_process_number}", :stop
-            end
-          end
-        end
-      end
-    end
-
-    # Defining my own monit setup, since capistrano-delayed_job need runit and doen't specifies the ruby version in the delayed_job conf.
-    namespace :monit do
-      desc 'Configure monit for delayed_job'
-      task :config do
-        on roles(:app), in: :sequence, wait: 5 do
-          within fetch(:sites_available) do
-            config_file = File.expand_path('deploy/delayed_job_monit.conf.erb', __dir__)
-            config = ERB.new(File.read(config_file)).result(binding)
-
-            upload! StringIO.new(config), '/tmp/delayed_job.conf'
-            arguments = :sudo, :mv, '/tmp/delayed_job.conf', "/etc/monit/conf.d/delayed_job_#{fetch(:application)}.conf"
-            execute(*arguments)
-          end
-        end
-      end
-    end
-  end
-
   # before :starting,     :check_revision
   after  :finishing,    :compile_assets
   after  :finishing,    :cleanup
   after  :finishing,    :restart
   after  :finished,     :clear_cache
-  after  :finishing,    'my_delayed_job:stop'
 end
 
 # TODO: https://github.com/capistrano/rails#uploading-your-masterkey
